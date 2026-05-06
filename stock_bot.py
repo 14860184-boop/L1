@@ -1,10 +1,11 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 
 stocks = ["1101", "2330"]
 
-BOT_TOKEN = "你的TOKEN"
-CHAT_ID = "你的CHAT_ID"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 headers = {
     "User-Agent": "Mozilla/5.0"
@@ -23,12 +24,15 @@ for stockid in stocks:
 
         messages.append(f"{stockid}: {price}")
 
-    except Exception as e:
+    except Exception:
         messages.append(f"{stockid}: 錯誤")
 
 msg = "📊 股價更新\n" + "\n".join(messages)
 
-requests.post(
+res = requests.post(
     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
     data={"chat_id": CHAT_ID, "text": msg}
 )
+
+print(res.status_code)
+print(res.text)
